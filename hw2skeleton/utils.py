@@ -25,7 +25,7 @@ class Residue:
 
     # Overload the __repr__ operator to make printing simpler.
     def __repr__(self):
-        return self.type + " " + self.number
+        return self.type# + " " + str(self.number)
 
 class ActiveSite:
     """

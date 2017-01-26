@@ -1,25 +1,19 @@
 from .utils import Atom, Residue, ActiveSite
 
-def compute_similarity(site_a, site_b):
+def compute_jaccard_similarity(site_a, site_b):
     """
-    Compute the similarity between two given ActiveSite instances.
+    Compute the Jaccard similarity between two given ActiveSite instances.
 
     Input: two ActiveSite instances
     Output: the similarity between them (a floating point number)
     """
-    
+    a = [i.type for i in site_a.residues]
+    b = [i.type for i in site_b.residues]
+
     similarity = 0.0
-
-    # Fill in your code here!
-    residues = []
-    count = 0
-    for i in site_a.residues:
-        residues.append[i]
-    for j in site_b.residues:
-        residues.append[j]
-    in_common = len(set(residues))
-    similarity = 2.0 * in_common/len(residues)
-
+    intersection = len(set(a) & set(b))
+    union = len(set(a) | set(b))
+    similarity = float(intersection)/float(union)
     return similarity
 
 

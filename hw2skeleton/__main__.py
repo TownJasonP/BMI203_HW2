@@ -1,6 +1,8 @@
 import sys
-from .io import read_active_sites, write_clustering, write_mult_clusterings
-from .cluster import cluster_by_partitioning, cluster_hierarchically
+from .io import read_active_sites,write_clustering, write_mult_clusterings
+from .cluster import compute_jaccard_similarity,cluster_by_partitioning, cluster_hierarchically
+import matplotlib.pyplot as plt
+import numpy as np
 
 # Some quick stuff to make sure the program is called correctly
 if len(sys.argv) < 4:
@@ -9,6 +11,16 @@ if len(sys.argv) < 4:
 
 active_sites = read_active_sites(sys.argv[2])
 
+result = np.zeros((len(active_sites),len(active_sites)))
+
+for i in range(len(active_sites)):
+    for j in range(len(active_sites)):
+        result[i][j] = compute_jaccard_similarity(active_sites[i], active_sites[j])
+
+plt.figure(facecolor = 'white')
+plt.imshow(result, interpolation = 'nearest', cmap = 'viridis')
+plt.colorbar()
+plt.show()
 # Choose clustering algorithm
 if sys.argv[1][0:2] == '-P':
     print("Clustering using Partitioning method")
