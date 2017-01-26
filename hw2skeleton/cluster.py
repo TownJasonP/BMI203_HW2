@@ -18,7 +18,7 @@ def compute_similarity(site_a, site_b):
     for j in site_b.residues:
         residues.append[j]
     in_common = len(set(residues))
-    similarity = in_common/len(residues)
+    similarity = 2.0 * in_common/len(residues)
 
     return similarity
 
