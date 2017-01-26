@@ -7,10 +7,18 @@ def compute_similarity(site_a, site_b):
     Input: two ActiveSite instances
     Output: the similarity between them (a floating point number)
     """
-
+    
     similarity = 0.0
 
     # Fill in your code here!
+    residues = []
+    count = 0
+    for i in site_a.residues:
+        residues.append[i]
+    for j in site_b.residues:
+        residues.append[j]
+    in_common = len(set(residues))
+    similarity = in_common/len(residues)
 
     return similarity
 
