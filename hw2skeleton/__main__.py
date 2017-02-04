@@ -1,6 +1,6 @@
 import sys
 from .io import read_active_sites,write_clustering, write_mult_clusterings
-from .cluster import compute_jaccard_similarity,cluster_by_partitioning, cluster_hierarchically
+from .cluster import compute_jaccard_similarity,cluster_by_partitioning, cluster_hierarchically, initialize_k_clusters, update_clusters
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -16,15 +16,17 @@ result = np.zeros((len(active_sites),len(active_sites)))
 for i in range(len(active_sites)):
     for j in range(len(active_sites)):
         result[i][j] = compute_jaccard_similarity(active_sites[i], active_sites[j])
-
+'''
 plt.figure(facecolor = 'white')
 plt.imshow(result, interpolation = 'nearest', cmap = 'viridis')
 plt.colorbar()
 plt.show()
+'''
+
 # Choose clustering algorithm
 if sys.argv[1][0:2] == '-P':
     print("Clustering using Partitioning method")
-    clustering = cluster_by_partitioning(active_sites)
+    clustering = cluster_by_partitioning(active_sites, 3)
     write_clustering(sys.argv[3], clustering)
 
 if sys.argv[1][0:2] == '-H':
