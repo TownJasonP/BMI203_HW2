@@ -10,10 +10,15 @@ def compute_jaccard_similarity(site_a, site_b):
     a = [i.type for i in site_a.residues]
     b = [i.type for i in site_b.residues]
 
-    similarity = 0.0
-    intersection = len(set(a) & set(b))
-    union = len(set(a) | set(b))
-    similarity = float(intersection)/float(union)
+    common_count = 0
+    for i in a:
+        if i in b:
+            count += 1
+
+    total = len(a) + len(b) - common_count
+
+    similarity = float(common_count)/float(total)
+    
     return similarity
 
 
