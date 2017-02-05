@@ -11,18 +11,6 @@ if len(sys.argv) < 4:
 
 active_sites = read_active_sites(sys.argv[2])
 
-result = np.zeros((len(active_sites),len(active_sites)))
-
-for i in range(len(active_sites)):
-    for j in range(len(active_sites)):
-        result[i][j] = compute_jaccard_similarity(active_sites[i], active_sites[j])
-'''
-plt.figure(facecolor = 'white')
-plt.imshow(result, interpolation = 'nearest', cmap = 'viridis')
-plt.colorbar()
-plt.show()
-'''
-
 # Choose clustering algorithm
 if sys.argv[1][0:2] == '-P':
     print("Clustering using Partitioning method")
@@ -32,4 +20,5 @@ if sys.argv[1][0:2] == '-P':
 if sys.argv[1][0:2] == '-H':
     print("Clustering using hierarchical method")
     clusterings = cluster_hierarchically(active_sites)
-    write_mult_clusterings(sys.argv[3], clusterings)
+    print(clusterings)
+    #write_mult_clusterings(sys.argv[3], clusterings)

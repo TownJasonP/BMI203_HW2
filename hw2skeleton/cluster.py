@@ -1,5 +1,12 @@
 from .utils import Atom, Residue, ActiveSite
 import numpy as np
+import collections
+
+def flatten(x):
+    if isinstance(x, collections.Iterable):
+        return [a for i in x for a in flatten(i)]
+    else:
+        return [x]
 
 def compute_jaccard_similarity(site_a, site_b):
     """
@@ -117,6 +124,54 @@ def cluster_hierarchically(active_sites):
             (each clustering is a list of lists of Sequence objects)
     """
 
-    # Fill in your code here!
+    # calculate initial pairwise distances (list of n^2-n (active_site_i-active_site_j, distance) pairs)
+    pairwise_distances = []
+    n = len(active_sites)
+    for i in range(n):
+        for j in range(i+1,n):
+            label = [active_sites[i],active_sites[j]]
+            distance = compute_jaccard_similarity(active_sites[i],active_sites[j])
+            pairwise_distances.append((label,distance))
 
-    return []
+    # find minimum distance in pairwise distances and group those objects
+    max_value = max([i[1] for i in pairwise_distances])
+    index = [i[1] for i in pairwise_distances].index(max_value)
+    to_group = pairwise_distances[index][0]
+
+    new_clusters = []
+    for i in active_sites:
+        if i not in to_group:
+            new_clusters.append(i)
+    new_clusters.append(to_group)
+
+    # calculate new pairwise distances:
+    while len(new_clusters) != 1:
+        pairwise_distances = []
+        n = len(new_clusters)
+        for i in range(n):
+            for j in range(i+1,n):
+                label = [new_clusters[i],new_clusters[j]]
+                flattened_cluster_i = flatten(new_clusters[i])
+                flattened_cluster_j = flatten(new_clusters[j])
+                distances = []
+                for site_i in flattened_cluster_i:
+                    for site_j in flattened_cluster_j:
+                        distances.append(compute_jaccard_similarity(site_i,site_j))
+
+                distance = (np.average(distances))
+                pairwise_distances.append((label,distance))
+
+        # find minimum distance in pairwise distances and group those objects
+        max_value = max([i[1] for i in pairwise_distances])
+        index = [i[1] for i in pairwise_distances].index(max_value)
+        to_group = pairwise_distances[index][0]
+
+        updated = []
+        for i in new_clusters:
+            if i not in to_group:
+                updated.append(i)
+        updated.append(to_group)
+
+        new_clusters = updated
+
+    return new_clusters
