@@ -3,6 +3,10 @@ import numpy as np
 import collections
 
 def flatten(x):
+    '''
+    flatten a nested list into a simple list
+    (Why is this not a native python function?!)
+    '''
     if isinstance(x, collections.Iterable):
         return [a for i in x for a in flatten(i)]
     else:
@@ -144,8 +148,9 @@ def cluster_hierarchically(active_sites):
             new_clusters.append(i)
     new_clusters.append(to_group)
 
-    # calculate new pairwise distances:
+    # iteratively cluster the closest 'objects' in the cluster
     while len(new_clusters) != 1:
+        # calculate new pairwise distances:
         pairwise_distances = []
         n = len(new_clusters)
         for i in range(n):
