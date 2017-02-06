@@ -1,6 +1,7 @@
 from .utils import Atom, Residue, ActiveSite
 import numpy as np
 import collections
+import matplotlib.pyplot as plt
 
 def flatten(x):
     '''
@@ -119,7 +120,7 @@ def cluster_by_partitioning(active_sites, k):
     return clusters
 
 
-def cluster_hierarchically(active_sites):
+def cluster_hierarchically(active_sites, k):
     """
     Cluster the given set of ActiveSite instances using a hierarchical algorithm.                                                                  #
 
@@ -149,7 +150,7 @@ def cluster_hierarchically(active_sites):
     new_clusters.append(to_group)
 
     # iteratively cluster the closest 'objects' in the cluster
-    while len(new_clusters) != 1:
+    while len(new_clusters) > k:
         # calculate new pairwise distances:
         pairwise_distances = []
         n = len(new_clusters)
@@ -179,4 +180,77 @@ def cluster_hierarchically(active_sites):
 
         new_clusters = updated
 
-    return new_clusters
+    output = []
+    for i in new_clusters:
+        output.append(flatten(i))
+
+    return output
+
+def cluster_randomly(active_sites, k):
+    '''
+    Generate randomly clustered data as a control measure
+
+    input: list of active sites to put into k clusters
+    output: list of lists containing active sites representing k clusters
+    '''
+    clusters = [[]for i in range(k)]
+    for a_s in active_sites:
+        ind = np.random.randint(0,k)
+        clusters[ind].append(a_s)
+    return(clusters)
+
+def quality_index(clustering_result):
+    all_data = flatten(clustering_result)
+
+    ratios = []
+    sizes = []
+
+    for cluster in clustering_result:
+        intra_cluster_sim = []
+        outside_cluster_sim = []
+
+        if len(cluster) > 1:
+            for j in enumerate(cluster):
+                for i in enumerate(cluster):
+                    if i[0] > j[0]:
+                        intra_cluster_sim.append(compute_jaccard_similarity(i[1],j[1]))
+            for j in cluster:
+                for i in all_data:
+                    if i not in cluster:
+                        outside_cluster_sim.append(compute_jaccard_similarity(i,j))
+
+            ins = np.mean(intra_cluster_sim)
+            out = np.mean(outside_cluster_sim)
+            #print(out)
+            ratios.append(ins/out)
+            sizes.append(len(cluster))
+
+    weighted_avg_ratio = np.sum(np.multiply(ratios,sizes))/len(all_data)
+
+    return(weighted_avg_ratio)
+
+def test_cluster_number(clustering_method, data):
+    '''
+    produce an elbow plot to help determine ideal number of clusters
+
+    input: clustering algorithm and data to be clustered
+    output: scatterplot showing quality index as a function of cluster size
+    '''
+
+    k = []
+    quality = []
+    for j in range(2): # Repeat 5 times
+        for i in range(2,20,2): # Check different numbers of clusters
+            k.append(i)
+            clusters = clustering_method(data,i)
+            q = quality_index(clusters)
+            quality.append(q)
+
+    plt.figure(facecolor = 'white')
+    plt.scatter(k,quality, color = 'blue', alpha = 0.4, marker = 'o')
+    plt.ylim(0,max(quality))
+    plt.xlim(0,21)
+    plt.xlabel('Number of Clusters')
+    plt.ylabel('Quality Index')
+    plt.grid()
+    plt.show()
