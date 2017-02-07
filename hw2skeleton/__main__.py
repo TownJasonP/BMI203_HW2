@@ -17,7 +17,7 @@ if sys.argv[1][0:2] == '-P':
     clustering = cluster_by_partitioning(active_sites, 3)
     print(quality_index(clustering))
     write_clustering(sys.argv[3], clustering)
-    test_cluster_number(cluster_by_partitioning, active_sites)
+    #test_cluster_number(cluster_by_partitioning, active_sites)
 
 if sys.argv[1][0:2] == '-H':
     print("Clustering using hierarchical method")
@@ -25,7 +25,7 @@ if sys.argv[1][0:2] == '-H':
     print(clustering)
     print(quality_index(clustering))
     write_clustering(sys.argv[3], clustering)
-    test_cluster_number(cluster_hierarchically, active_sites)
+
 
 if sys.argv[1][0:2] == '-R':
     print("Clustering using random grouping method (control)")
@@ -33,4 +33,20 @@ if sys.argv[1][0:2] == '-R':
     print(clustering)
     print(quality_index(clustering))
     write_clustering(sys.argv[3], clustering)
-    test_cluster_number(cluster_randomly, active_sites)
+    #test_cluster_number(cluster_randomly, active_sites)
+
+plt.figure(facecolor = 'white')
+
+for i in [cluster_hierarchically, cluster_by_partitioning, cluster_randomly]:
+    methods = {'cluster_randomly':'Random', 'cluster_hierarchically':'Hierarchical', 'cluster_by_partitioning':'Partition'}
+    color_dict = {'cluster_randomly':'green', 'cluster_hierarchically':'red', 'cluster_by_partitioning':'blue'}
+
+    k, q = test_cluster_number(i, active_sites, 5)
+    plt.scatter(k,q, alpha = 0.4, marker = 'o', color = color_dict[i.__name__], label = methods[i.__name__])
+
+plt.xlim(0,20)
+plt.xlabel('Number of Clusters')
+plt.ylabel('Quality Index')
+plt.grid()
+plt.legend()
+plt.savefig('cluster_quality.png')
