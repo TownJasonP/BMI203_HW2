@@ -3,14 +3,12 @@ from hw2skeleton import io
 import os
 
 def test_similarity():
-    filename_a = os.path.join("data", "276.pdb")
-    filename_b = os.path.join("data", "4629.pdb")
 
-    activesite_a = io.read_active_site(filename_a)
-    activesite_b = io.read_active_site(filename_b)
+    activesite_a = ['A','B','C']
+    activesite_b = ['A','B','D']
 
     # update this assertion
-    assert cluster.compute_similarity(activesite_a, activesite_b) == 0.0
+    assert cluster.compute_jaccard_similarity(activesite_a, activesite_b) == 0.5
 
 def test_partition_clustering():
     # tractable subset

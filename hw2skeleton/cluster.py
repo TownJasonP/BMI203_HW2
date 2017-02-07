@@ -229,28 +229,20 @@ def quality_index(clustering_result):
 
     return(weighted_avg_ratio)
 
-def test_cluster_number(clustering_method, data):
+def test_cluster_number(clustering_method, data, repetitions):
     '''
     produce an elbow plot to help determine ideal number of clusters
 
     input: clustering algorithm and data to be clustered
     output: scatterplot showing quality index as a function of cluster size
     '''
-
     k = []
     quality = []
-    for j in range(2): # Repeat 5 times
-        for i in range(2,20,2): # Check different numbers of clusters
+    for j in range(repetitions): # Repeat
+        for i in range(2,20): # Check different numbers of clusters
+            np.random.shuffle(data) # shuffle data (not sure if data order plays a role?)
             k.append(i)
             clusters = clustering_method(data,i)
             q = quality_index(clusters)
             quality.append(q)
-
-    plt.figure(facecolor = 'white')
-    plt.scatter(k,quality, color = 'blue', alpha = 0.4, marker = 'o')
-    plt.ylim(0,max(quality))
-    plt.xlim(0,21)
-    plt.xlabel('Number of Clusters')
-    plt.ylabel('Quality Index')
-    plt.grid()
-    plt.show()
+    return(k,quality)
