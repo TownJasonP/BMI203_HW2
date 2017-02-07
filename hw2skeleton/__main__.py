@@ -28,7 +28,7 @@ if sys.argv[1][0:2] == '-H':
     test_cluster_number(cluster_hierarchically, active_sites)
 
 if sys.argv[1][0:2] == '-R':
-    print("Clustering using random method (control)")
+    print("Clustering using random grouping method (control)")
     clustering = cluster_randomly(active_sites, 3)
     print(clustering)
     print(quality_index(clustering))
