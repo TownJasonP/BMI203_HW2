@@ -199,7 +199,16 @@ def cluster_randomly(active_sites, k):
         clusters[ind].append(a_s)
     return(clusters)
 
+
+
 def quality_index(clustering_result):
+    '''
+    Returns a weighted average of ratios of average intra-cluster similarity to average
+    extra-cluster similarity
+
+    input: list of clusters
+    output: float representing a 'quality index' of clustering
+    '''
     all_data = flatten(clustering_result)
 
     ratios = []
@@ -219,8 +228,8 @@ def quality_index(clustering_result):
                     if i not in cluster:
                         outside_cluster_sim.append(compute_jaccard_similarity(i,j))
 
-            ins = np.mean(intra_cluster_sim)
-            out = np.mean(outside_cluster_sim)
+            ins = np.average(intra_cluster_sim)
+            out = np.average(outside_cluster_sim)
             #print(out)
             ratios.append(ins/out)
             sizes.append(len(cluster))
@@ -238,9 +247,11 @@ def test_cluster_number(clustering_method, data, repetitions):
     '''
     k = []
     quality = []
+
     for j in range(repetitions): # Repeat
         for i in range(2,20): # Check different numbers of clusters
             np.random.shuffle(data) # shuffle data (not sure if data order plays a role?)
+
             k.append(i)
             clusters = clustering_method(data,i)
             q = quality_index(clusters)

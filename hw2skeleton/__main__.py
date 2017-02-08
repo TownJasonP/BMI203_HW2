@@ -29,7 +29,7 @@ if sys.argv[1][0:2] == '-H':
 
 
 if sys.argv[1][0:2] == '-R':
-    print("Clustering using random method (control)")
+    print("Clustering using random grouping method (control)")
     clustering = cluster_randomly(active_sites, 3)
     print(clustering)
     print(quality_index(clustering))
@@ -59,20 +59,38 @@ def compare_cluster_overlap(n):
         overlaps.append(np.sum(perm_overlap))
     return float(max(overlaps))
 
+def compare_cluster_overlap_rand(n):
+    k_clusters = cluster_randomly(active_sites, n)
+    h_clusters = cluster_randomly(active_sites, n)
+
+    permutations = list(itertools.permutations(range(n)))
+
+    overlaps = []
+    for i in permutations:
+        perm_overlap = []
+        for j in range(n):
+            perm_overlap.append(compute_overlap(k_clusters[j],h_clusters[i[j]]))
+        overlaps.append(np.sum(perm_overlap))
+    return float(max(overlaps))
+
 plt.figure(facecolor = 'white')
 x = []
 y = []
+y_c = []
 for j in range(5): # number sims to run
     print('Simulation # ' + str(j+1) + ' of 5')
-    for i in range(2,10): # range of cluster numbers to test
+    for i in range(2,8): # range of cluster numbers to test
         x.append(i)
         y.append(compare_cluster_overlap(i)/len(active_sites))
+        y_c.append(compare_cluster_overlap_rand(i)/len(active_sites))
 
 plt.ylabel('Overlap of Cluster Contents')
 plt.xlabel('Number of Clusters')
-plt.scatter(x,y, marker = 'o', color = 'blue', alpha = 0.4)
+plt.scatter(x,y, marker = 'o', color = 'blue', alpha = 0.4, label = 'H, P')
+plt.scatter(x,y_c, marker = 'o', color = 'green', alpha = 0.4, label = 'R, R')
 plt.ylim(0,1)
 plt.xlim(0,10)
+plt.legend()
 plt.show()
 
 # Compare clustering quality across methods and across cluster number
